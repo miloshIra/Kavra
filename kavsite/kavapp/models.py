@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -9,7 +11,6 @@ from django.contrib.auth.models import User
     # email
     # first_name
     # last_name
-
 
 
 class Profile(models.Model):
@@ -24,7 +25,7 @@ class Profile(models.Model):
     likes = models.IntegerField(default=0)
     orders_cooked = models.IntegerField(default=0)
     orders_bought = models.IntegerField(default=0)
-    created = models.DateTimeField()
+    created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.user)
@@ -35,14 +36,14 @@ class Profile(models.Model):
 
 class Recipe(models.Model):
     """ Recipe model for the user all users can have many recipes and they are used to make orders. """
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     name = models.CharField(max_length=32)
     image = models.ImageField(null=True, blank=True, upload_to="images/recipes")
-    ingredients = models.CharField(max_length=10)  # Needs to be a list or dictionary
-    prep_time = models.IntegerField()  # in minutes
-    user_id = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    ingredients = models.CharField(max_length=10, blank=True, null=True)  # Needs to be a list or dictionary
+    prep_time = models.IntegerField(default=0)  # in minutes
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     likes = models.IntegerField(default=0)
-    created = models.DateTimeField()
+    created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.name)
@@ -59,12 +60,12 @@ class Order(models.Model):
         no = 'no'
         in_progress = 'in_progress'
 
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     time = models.IntegerField()  # in minutes
-    by_user_id = models.CharField(max_length=10)
-    for_user_id = models.CharField(max_length=10)
-    recipe_id = models.CharField(max_length=10)
-    created = models.DateTimeField()
+    by_user = models.CharField(max_length=10)
+    for_user = models.CharField(max_length=10)
+    recipe = models.CharField(max_length=10)
+    created = models.DateTimeField(auto_now_add=True)
     completed = models.CharField(max_length=11, choices=Completed.choices, default=Completed.in_progress)
 
     class Meta:
@@ -79,11 +80,11 @@ class HistoryLog(models.Model):
         no = 'no'
         in_progress = 'in_progress'
 
-    id = models.UUIDField(primary_key=True)
-    by_user_id = models.CharField(max_length=10)
-    for_user_id = models.CharField(max_length=10)
-    recipe_id = models.CharField(max_length=10)
-    created = models.DateTimeField()
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True)
+    by_user = models.CharField(max_length=10)
+    for_user = models.CharField(max_length=10)
+    recipe = models.CharField(max_length=10)
+    created = models.DateTimeField(auto_now_add=True)
     completed = models.CharField(max_length=11, choices=Completed.choices, default=Completed.in_progress)
 
     class Meta:
@@ -91,22 +92,22 @@ class HistoryLog(models.Model):
 
 
 class Review(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     review = models.TextField(max_length=300)
     by_user = models.CharField(max_length=10)
-    recipe_id = models.CharField(max_length=10)
+    recipe = models.CharField(max_length=10)
     for_user = models.CharField(max_length=10)
-    created = models.DateTimeField()
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ('-created',)
 
 
 class Tag(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     name = models.CharField(max_length=12)
-    recipe_id = models.CharField(max_length=12)
-    created = models.DateTimeField()
+    recipe = models.CharField(max_length=12)
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ('-created',)
