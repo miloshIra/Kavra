@@ -1,37 +1,54 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
+# Django User models is connected to Profile model here it requires:
+    # username
+    # password
+    # email
+    # first_name
+    # last_name
 
-class User(models.Model):
+
+
+class Profile(models.Model):
     """ Basic user model of the app """
 
     class Role(models.TextChoices):
         cook = 'cook'
         customer = 'customer'
 
-    id = models.UUIDField(primary_key=True)
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     role = models.CharField(max_length=8, choices=Role.choices, default=Role.customer)
-    name = models.CharField(max_length=16)
-    last_name = models.CharField(max_length=16)
-    username = models.CharField(max_length=16)
-    email = models.EmailField(max_length=32)
-    password = models.CharField(max_lenth=32)
     likes = models.IntegerField(default=0)
     orders_cooked = models.IntegerField(default=0)
     orders_bought = models.IntegerField(default=0)
     created = models.DateTimeField()
+
+    def __str__(self):
+        return str(self.user)
+
+    class Meta:
+        ordering = ('-created',)
 
 
 class Recipe(models.Model):
     """ Recipe model for the user all users can have many recipes and they are used to make orders. """
     id = models.UUIDField(primary_key=True)
     name = models.CharField(max_length=32)
-    ingredients = models.Model()  # Needs to be a list or dictionary
-    prep_time = models.IntegerField(max_length=4)  # in minutes
-    user_id = models.CharField()  # this is the creator
+    image = models.ImageField(null=True, blank=True, upload_to="images/recipes")
+    ingredients = models.CharField(max_length=10)  # Needs to be a list or dictionary
+    prep_time = models.IntegerField()  # in minutes
+    user_id = models.ForeignKey(Profile, on_delete=models.CASCADE)
     likes = models.IntegerField(default=0)
     created = models.DateTimeField()
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        ordering = ('-created',)
 
 
 class Order(models.Model):
@@ -44,11 +61,14 @@ class Order(models.Model):
 
     id = models.UUIDField(primary_key=True)
     time = models.IntegerField()  # in minutes
-    by_user_id = models.CharField()
-    for_user_id = models.CharField()
-    recipe_id = models.CharField()
+    by_user_id = models.CharField(max_length=10)
+    for_user_id = models.CharField(max_length=10)
+    recipe_id = models.CharField(max_length=10)
     created = models.DateTimeField()
-    completed = models.CharField(max_length=10, choices=Completed.choices, default=Completed.in_progress)
+    completed = models.CharField(max_length=11, choices=Completed.choices, default=Completed.in_progress)
+
+    class Meta:
+        ordering = ('-created',)
 
 
 class HistoryLog(models.Model):
@@ -60,26 +80,36 @@ class HistoryLog(models.Model):
         in_progress = 'in_progress'
 
     id = models.UUIDField(primary_key=True)
-    by_user_id = models.CharField()
-    for_user_id = models.CharField()
-    recipe_id = models.CharField()
+    by_user_id = models.CharField(max_length=10)
+    for_user_id = models.CharField(max_length=10)
+    recipe_id = models.CharField(max_length=10)
     created = models.DateTimeField()
-    completed = models.CharField(max_length=10, choices=Completed.choices, default=Completed.in_progress)
+    completed = models.CharField(max_length=11, choices=Completed.choices, default=Completed.in_progress)
+
+    class Meta:
+        ordering = ('-created',)
 
 
 class Review(models.Model):
-    id = models.UUIDField()
-    review = models.TextField()
-    by_user = models.CharField()
-    for_user = models.CharField()
-    text = models.TextField()
+    id = models.UUIDField(primary_key=True)
+    review = models.TextField(max_length=300)
+    by_user = models.CharField(max_length=10)
+    recipe_id = models.CharField(max_length=10)
+    for_user = models.CharField(max_length=10)
     created = models.DateTimeField()
+
+    class Meta:
+        ordering = ('-created',)
 
 
 class Tag(models.Model):
-    id = models.UUIDField()
+    id = models.UUIDField(primary_key=True)
     name = models.CharField(max_length=12)
-    recipe_id = models.CharField()
+    recipe_id = models.CharField(max_length=12)
+    created = models.DateTimeField()
+
+    class Meta:
+        ordering = ('-created',)
 
 
 
