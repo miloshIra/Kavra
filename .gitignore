@@ -2,6 +2,10 @@
 *.log
 *.pot
 *.pyc
+*.txt
 __pycache__
 db.sqlite3
 media
+
+# Database backup
+data

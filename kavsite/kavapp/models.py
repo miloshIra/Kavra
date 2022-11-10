@@ -39,7 +39,7 @@ class Recipe(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     name = models.CharField(max_length=32)
     image = models.ImageField(null=True, blank=True, upload_to="images/recipes")
-    ingredients = ArrayField(models.CharField(max_length=200), blank=True, null=True, default=list)
+    ingredients = ArrayField(models.CharField(max_length=200), blank=True, null=True, size=8, default=list)
     #ingredients = models.CharField(max_length=10, blank=True, null=True)  # Needs to be a list or dictionary
     prep_time = models.IntegerField(default=0)  # in minutes
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
