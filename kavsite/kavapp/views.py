@@ -1,10 +1,9 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+
 from django.contrib import messages
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from django.contrib import messages
 from .serializers import RecipeSerializer
 from .models import Recipe
 from django.core.exceptions import ValidationError

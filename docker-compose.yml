@@ -6,7 +6,7 @@ services:
     volumes:
       - ./data/db:/var/lib//postgresql/data # This makes a data file in your workdir
     environment:
-      - POSTGRES_DB=kav_app_db
+      - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   kavsite:
@@ -14,11 +14,14 @@ services:
     build: .
     volumes:
       - ./kavsite:/kavsite
-    command: python manage.py runserver 0.0.0.0:8000
+    command: > # add python manage.py makemigrations && maybe.
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
     environment:
-      - POSTGRES_DB=kav_app_db
+      - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     depends_on:

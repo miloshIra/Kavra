@@ -39,8 +39,8 @@ class Recipe(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     name = models.CharField(max_length=32)
     image = models.ImageField(null=True, blank=True, upload_to="images/recipes")
-    ingredients = ArrayField(models.CharField(max_length=200), blank=True, null=True, size=8, default=list)
-    #ingredients = models.CharField(max_length=10, blank=True, null=True)  # Needs to be a list or dictionary
+    ##ingredients = ArrayField(models.CharField(max_length=200), blank=True, null=True, size=8, default=list)
+    ingredients = models.CharField(max_length=10, blank=True, null=True)  # Needs to be a list or dictionary
     prep_time = models.IntegerField(default=0)  # in minutes
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     likes = models.IntegerField(default=0)
@@ -84,7 +84,7 @@ class HistoryLog(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     by_user = models.CharField(max_length=10)
     for_user = models.CharField(max_length=10)
-    recipe = models.CharField(max_length=10)
+    recipe = models.ForeignKey(Recipe, null=True, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     completed = models.CharField(max_length=11, choices=Completed.choices, default=Completed.in_progress)
 
@@ -96,7 +96,7 @@ class Review(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     review = models.TextField(max_length=300)
     by_user = models.CharField(max_length=10)
-    recipe = models.CharField(max_length=10)
+    recipe = models.ForeignKey(Recipe, null=True, on_delete=models.CASCADE)
     for_user = models.CharField(max_length=10)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -107,7 +107,7 @@ class Review(models.Model):
 class Tag(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     name = models.CharField(max_length=12)
-    recipe = models.CharField(max_length=12)
+    recipe = models.ForeignKey(Recipe, null=True, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:

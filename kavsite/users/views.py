@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from rest_framework.response import Response
+from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import api_view
 from django.contrib import messages
@@ -14,7 +15,9 @@ from .serializers import UserSerializer
 def login_user(request):
     username = request.data['username']
     password = request.data['password']
+    print(username, password)
     user = authenticate(request, username=username, password=password)
+    print(user)
     if user is not None:
         login(request, user)
         return Response("User logged in", status=status.HTTP_200_OK)
@@ -28,6 +31,14 @@ def logout_user(request):
     logout(request)
     messages.success(request, "You were logged out")
     return Response("User logged out", status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_all_users(request):
+    User = get_user_model()
+    users = User.objects.values()
+    context = {'users': users}
+    return Response(context, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
