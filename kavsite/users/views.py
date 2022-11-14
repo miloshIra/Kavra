@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+import hashlib
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from rest_framework.response import Response
@@ -7,6 +8,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from django.contrib import messages
 from .serializers import UserSerializer
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -15,7 +17,6 @@ from .serializers import UserSerializer
 def login_user(request):
     username = request.data['username']
     password = request.data['password']
-    print(username, password)
     user = authenticate(request, username=username, password=password)
     print(user)
     if user is not None:
@@ -45,10 +46,23 @@ def get_all_users(request):
 def create_user(request):
     new_user = UserSerializer(data=request.data)
     if new_user.is_valid():
-        user_saved = new_user.save()
+        user_saved = new_user.create(request.data)
         return Response('User {} created'.format(user_saved.username), status=status.HTTP_200_OK)
     else:
         return Response('User not created', status=status.HTTP_200_OK)
+
+    # if new_user.is_valid():
+    #     user_saved = new_user.save()
+    #     return Response('User {} created'.format(user_saved.username), status=status.HTTP_200_OK)
+    # else:
+    #     return Response('User not created', status=status.HTTP_200_OK)
+
+
+@api_view(['DELETE'])
+def delete_user(request):
+    user = User.objects.get(id=request.data['id'])
+    user.delete()
+    return Response('User deleted')
 
 
 # @api_view(['GET'])

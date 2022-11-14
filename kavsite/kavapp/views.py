@@ -23,7 +23,6 @@ def create_recipe(request):
     new_recipe.is_valid()
     print(new_recipe.errors)  # THIS LINE IS GOLD!!
     if new_recipe.is_valid():
-        print("hi")
         try:
             new_recipe_saved = new_recipe.save()
         except Exception as e:
@@ -37,3 +36,11 @@ def get_all_recipes(request):
     serialized_data = RecipeSerializer(recipes, many=True).data
     context = {'recipes': serialized_data}
     return Response(context, status=status.HTTP_200_OK)
+
+
+@api_view(['DELETE'])
+def delete_recipe_by_id(request):
+    delete_recipe = Recipe.objects.get(id=request.data['id'])
+    delete_recipe.delete()
+    return Response("Recipe with id {} was deleted".format(id))
+
