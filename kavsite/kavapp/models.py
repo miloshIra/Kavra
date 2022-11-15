@@ -40,7 +40,8 @@ class Recipe(models.Model):
     name = models.CharField(max_length=32)
     image = models.ImageField(null=True, blank=True, upload_to="images/recipes")
     ingredients = ArrayField(models.CharField(max_length=200), blank=True, null=True, default=list)
-    # ingredients = models.CharField(max_length=10, blank=True, null=True)  # Needs to be a list or dictionary
+    #ingredients = models.CharField(max_length=10, blank=True, null=True)  # Needs to be a list or dictionary
+    tags = models.ManyToManyField('Tag', blank=True)
     prep_time = models.IntegerField(default=0)  # in minutes
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     likes = models.IntegerField(default=0)
@@ -106,12 +107,16 @@ class Review(models.Model):
 
 class Tag(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
-    name = models.CharField(max_length=12)
-    recipe = models.ForeignKey(Recipe, null=True, on_delete=models.CASCADE)
+    name = models.CharField(max_length=16)
     created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.name)
 
     class Meta:
         ordering = ('-created',)
+
+
 
 
 
