@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from .serializers import RecipeSerializer
 from .models import Recipe
+from users.models import Profile
 from django.core.exceptions import ValidationError
 
 # Create your views here.
@@ -17,10 +18,10 @@ def create_recipe(request):
 
     data = request.data
     data['user'] = request.user.id
-
+    profile = Profile.objects.get(user=request.user.id)
     new_recipe = RecipeSerializer(data=data)
 
-    new_recipe.user = request.user
+    new_recipe.user = profile
     new_recipe.is_valid()
     print(new_recipe.errors)  # THIS LINE IS GOLD!!
     if new_recipe.is_valid():
