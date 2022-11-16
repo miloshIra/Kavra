@@ -20,7 +20,7 @@ class Profile(models.Model):
         cook = 'cook'
         customer = 'customer'
 
-    # id = models.IntegerField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
+    uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     username = models.CharField(max_length=24, blank=True)
     email = models.EmailField(max_length=500, blank=True, null=True)
