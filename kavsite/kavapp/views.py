@@ -31,7 +31,7 @@ def create_recipe(request):
     return Response('Recipe saved', status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
+@api_view(['PUT'])
 def update_recipe(request, pk):
     """ Updates a recipe ... at least it should .. if it works it's django magic."""
     print(pk)
@@ -65,7 +65,6 @@ def get_all_recipes(request):
 
 @api_view(['DELETE'])
 def delete_recipe(request, pk):
-    delete_recipe = Recipe.objects.get(id=pk)
-    delete_recipe.delete()
+    del_recipe = Recipe.objects.get(id=pk)
+    del_recipe.delete()
     return Response("Recipe with id {} was deleted".format(pk))
-

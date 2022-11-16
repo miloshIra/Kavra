@@ -18,7 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('kavapp.urls')),
-    path('users/', include('django.contrib.auth.urls')),
-    path('users/', include('users.urls'))
+    path('', include('kavapp.urls'), name="home"),
+    path('users/', include('django.contrib.auth.urls'), name="dj_users"),
+    path('users/', include('users.urls'), name="users")
 ]

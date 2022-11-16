@@ -51,12 +51,6 @@ def create_user(request):
     else:
         return Response('User not created', status=status.HTTP_200_OK)
 
-    # if new_user.is_valid():
-    #     user_saved = new_user.save()
-    #     return Response('User {} created'.format(user_saved.username), status=status.HTTP_200_OK)
-    # else:
-    #     return Response('User not created', status=status.HTTP_200_OK)
-
 
 @api_view(['DELETE'])
 def delete_user(request):

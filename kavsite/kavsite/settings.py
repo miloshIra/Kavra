@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'kavapp',
+    # 'kavapp.apps.KavappConfig', why tho ?
     'users',
+    # 'users.apps.UsersConfig', why tho ?
 ]
 
 MIDDLEWARE = [
