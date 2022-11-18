@@ -16,11 +16,8 @@ from django.core.exceptions import ValidationError
 def create_recipe(request):
     """ Creates a new recipe ... at least it should .. if it works it's django magic."""
 
-    data = request.data
-    data['user'] = request.user.id
     profile = Profile.objects.get(user=request.user.id)
-    new_recipe = RecipeSerializer(data=data)
-
+    new_recipe = RecipeSerializer(data=request.data)
     new_recipe.user = profile
     new_recipe.is_valid()
     print(new_recipe.errors)  # THIS LINE IS GOLD!!
