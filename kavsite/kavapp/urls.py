@@ -11,4 +11,7 @@ urlpatterns = [
     path('recipes/delete/<str:pk>', views.delete_recipe, name="delete_recipe"),
     path('recipes/update/<str:pk>', views.update_recipe, name="update_recipes"),
 
+    # CRUD for Orders...
+    path('orders/create/', views.create_order, name='create_order'),
+
 ]

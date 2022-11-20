@@ -5,11 +5,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from .serializers import RecipeSerializer
-from .models import Recipe
+from .models import Recipe, Order
 from users.models import Profile
 from django.core.exceptions import ValidationError
 
 # Create your views here.
+
+# .............. Recipes API .........................
 
 
 @api_view(['POST'])
@@ -26,7 +28,9 @@ def create_recipe(request):
             new_recipe_saved = new_recipe.save()
         except Exception as e:
             raise e
-    return Response('Recipe saved', status=status.HTTP_200_OK)
+
+    serialized_data = RecipeSerializer(new_recipe_saved, many=False).data
+    return Response(serialized_data, status=status.HTTP_200_OK)
 
 
 @api_view(['PUT'])
@@ -66,3 +70,14 @@ def delete_recipe(request, pk):
     del_recipe = Recipe.objects.get(id=pk)
     del_recipe.delete()
     return Response("Recipe with id {} was deleted".format(pk))
+
+
+# .............. Recipes API .........................
+
+@api_view(['POST'])
+def create_order(request):
+    pass
+    profile = Profile.objects.get(user_id=request.user.id)
+    recipe = Recipe.objects.get(id=request.recipe['id'])
+    by_user = recipe.user
+    return Response(by_user)
