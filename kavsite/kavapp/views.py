@@ -4,8 +4,8 @@ from django.contrib import messages
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from .serializers import RecipeSerializer
-from .models import Recipe, Order
+from .serializers import RecipeSerializer, OrderSerializer, TagSerializer, ReviewSerializer
+from .models import Recipe, Order, Tag, Review
 from users.models import Profile
 from django.core.exceptions import ValidationError
 
@@ -72,12 +72,105 @@ def delete_recipe(request, pk):
     return Response("Recipe with id {} was deleted".format(pk))
 
 
-# .............. Recipes API .........................
+# .............. Order API .........................
 
 @api_view(['POST'])
 def create_order(request):
     pass
     profile = Profile.objects.get(user_id=request.user.id)
-    recipe = Recipe.objects.get(id=request.recipe['id'])
-    by_user = recipe.user
-    return Response(by_user)
+    recipe = Recipe.objects.get(id=request.data['recipe']['id'])
+    print(recipe)
+    by_user = recipe.user.id
+    new_order = OrderSerializer(data={**request.data, "for_user": profile.user.id,
+                                                      "by_user": by_user,
+                                                      "recipe": recipe.id})
+    if new_order.is_valid():
+        try:
+            new_order_saved = new_order.save()
+            print(new_order.errors)
+        except Exception as e:
+            raise e
+    return Response(new_order.data)
+
+
+@api_view(['PUT'])
+def complete_order(request, pk):
+    """ Updates a recipe ... at least it should .. if it works it's django magic."""
+    print(pk)
+    order = Order.objects.get(id=pk)
+    order.completed = Order.Completed.yes
+    updated_order = order
+    try:
+        updated_recipe_saved = updated_order.save()
+    except Exception as e:
+        raise e
+    return Response('Order completed', status=status.HTTP_200_OK)
+
+
+@api_view(['PUT'])
+def cancel_order(request, pk):
+    """ Updates a recipe ... at least it should .. if it works it's django magic."""
+    print(pk)
+    order = Order.objects.get(id=pk)
+    order.completed = Order.Completed.canceled
+    updated_order = order
+    try:
+        updated_recipe_saved = updated_order.save()
+    except Exception as e:
+        raise e
+    return Response('Order canceled', status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_active_orders(request, pk):
+    pass
+
+
+@api_view(['GET'])
+def get_all_orders(request):
+    orders = Order.objects.all()
+    serialized_data = OrderSerializer(orders, many=True).data
+    context = {'orders': serialized_data}
+    return Response(context, status=status.HTTP_200_OK)
+
+# ................... TAGS api...................
+
+
+@api_view(['POST'])
+def create_tag(request):
+    new_tag = TagSerializer(data=request.data)
+    if new_tag.is_valid():
+        tag_saved = new_tag.save()
+    return Response("Tag saved", status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_all_tags(request):
+    tags = Tag.objects.all()
+    serialized_data = TagSerializer(tags, many=True).data
+    context = {'tags': serialized_data}
+    return Response(context, status=status.HTTP_200_OK)
+
+
+# .......................... Review apis.........................
+
+@api_view(['POST'])
+def create_review(request):
+    recipe = Recipe.objects.get(id=request.data['recipe'])
+    new_review = Review(review=request.data['review'],
+                        by_user=request.user.id,
+                        owner=recipe)
+    new_review.save()
+
+    # print(new_review)
+    # recipe.review = new_review
+    # recipe.save()
+    return Response("Review saved", status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_all_reviews(request):
+    reviews = Review.objects.all()
+    serialized_data = ReviewSerializer(reviews, many=True).data
+    context = {'reviews': serialized_data}
+    return Response(context, status=status.HTTP_200_OK)

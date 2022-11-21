@@ -1,6 +1,6 @@
 from dataclasses import field, fields
 from rest_framework import serializers
-from .models import Recipe, Review, HistoryLog, Order
+from .models import Recipe, Review, Order, Tag
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -15,14 +15,13 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class HistorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = HistoryLog
-        fields = '__all__'
-
-
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
 
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = '__all__'

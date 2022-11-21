@@ -62,12 +62,13 @@ class Order(models.Model):
         yes = 'yes'
         no = 'no'
         in_progress = 'in_progress'
+        canceled = 'canceled'
 
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     time = models.IntegerField()  # in minutes
     by_user = models.CharField(max_length=10)
     for_user = models.CharField(max_length=10)
-    recipe = models.CharField(max_length=10)
+    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     completed = models.CharField(max_length=11, choices=Completed.choices, default=Completed.in_progress)
 
@@ -75,34 +76,35 @@ class Order(models.Model):
         ordering = ('-created',)
 
 
-class HistoryLog(models.Model):
-    """ History log class that logs the whole activity of a user """
-
-    class Completed(models.TextChoices):
-        yes = 'yes'
-        no = 'no'
-        in_progress = 'in_progress'
-
-    id = models.UUIDField(default=uuid.uuid4, primary_key=True)
-    by_user = models.CharField(max_length=10)
-    for_user = models.CharField(max_length=10)
-    recipe = models.ForeignKey(Recipe, null=True, on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
-    completed = models.CharField(max_length=11, choices=Completed.choices, default=Completed.in_progress)
-
-    class Meta:
-        ordering = ('-created',)
+# class HistoryLog(models.Model):
+#     """ History log class that logs the whole activity of a user """
+#
+#     class Completed(models.TextChoices):
+#         yes = 'yes'
+#         no = 'no'
+#         in_progress = 'in_progress'
+#
+#     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
+#     by_user = models.CharField(max_length=10)
+#     for_user = models.CharField(max_length=10)
+#     recipe = models.ForeignKey(Recipe, null=True, on_delete=models.CASCADE)
+#     created = models.DateTimeField(auto_now_add=True)
+#     completed = models.CharField(max_length=11, choices=Completed.choices, default=Completed.in_progress)
+#
+#     class Meta:
+#         ordering = ('-created',)
 
 
 class Review(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
+    owner = models.ForeignKey(Recipe, on_delete=models.CASCADE, null=True)
     review = models.TextField(max_length=300)
     by_user = models.CharField(max_length=10)
-    recipe = models.ForeignKey(Recipe, null=True, on_delete=models.CASCADE)
-    for_user = models.CharField(max_length=10)
+    for_user = models.CharField(max_length=10, blank=True)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        unique_together = [['by_user', 'owner']]
         ordering = ('-created',)
 
 
