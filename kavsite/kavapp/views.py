@@ -4,8 +4,8 @@ from django.contrib import messages
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from .serializers import RecipeSerializer, OrderSerializer, TagSerializer, ReviewSerializer
-from .models import Recipe, Order, Tag, Review
+from .serializers import RecipeSerializer, OrderSerializer, ReviewSerializer, TagSerializer
+from .models import Recipe, Order, Review, Tag
 from users.models import Profile
 from django.core.exceptions import ValidationError
 

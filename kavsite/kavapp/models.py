@@ -42,7 +42,7 @@ class Recipe(models.Model):
     image = models.ImageField(null=True, blank=True, upload_to="images/recipes")
     ingredients = ArrayField(models.CharField(max_length=200), blank=True, null=True, default=list)
     #ingredients = models.CharField(max_length=10, blank=True, null=True)  # Needs to be a list or dictionary
-    tags = models.ManyToManyField('Tag', blank=True)
+    #tags = models.ManyToManyField('Tag', blank=True)
     prep_time = models.IntegerField(default=0)  # in minutes
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     likes = models.IntegerField(default=0)
@@ -118,8 +118,6 @@ class Tag(models.Model):
 
     class Meta:
         ordering = ('-created',)
-
-
 
 
 

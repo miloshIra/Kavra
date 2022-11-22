@@ -17,9 +17,9 @@ urlpatterns = [
     path('orders/complete/<str:pk>', views.complete_order, name='complete_order'),
     path('orders/cancel/<str:pk>', views.cancel_order, name='cancel_order'),
 
-    # Tags
-    path('tags/', views.get_all_tags, name='tags'),
-    path('tags/create/', views.create_tag, name="create_tag"),
+    # # Tags
+    # path('tags/', views.get_all_tags, name='tags'),
+    # path('tags/create/', views.create_tag, name="create_tag"),
 
     # Reviews
     path('reviews/create/', views.create_review, name='create_review'),
