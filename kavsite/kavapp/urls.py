@@ -10,6 +10,7 @@ urlpatterns = [
     path('recipes/create/', views.create_recipe, name="create_recipe"),
     path('recipes/delete/<str:pk>', views.delete_recipe, name="delete_recipe"),
     path('recipes/update/<str:pk>', views.update_recipe, name="update_recipes"),
+    path('recipes/by_user/<str:pk>', views.get_recipe_by_user, name="get_recipes_by_user"),
 
     # CRUD for Orders...
     path('orders/create/', views.create_order, name='create_order'),
@@ -17,9 +18,10 @@ urlpatterns = [
     path('orders/complete/<str:pk>', views.complete_order, name='complete_order'),
     path('orders/cancel/<str:pk>', views.cancel_order, name='cancel_order'),
 
-    # # Tags
-    # path('tags/', views.get_all_tags, name='tags'),
-    # path('tags/create/', views.create_tag, name="create_tag"),
+    # Tags
+    path('tags/', views.get_all_tags, name='tags'),
+    path('tags/create/', views.create_tag, name="create_tag"),
+    path('tags/add_to_recipe/', views.add_tag_to_recipe, name='add_tag'),
 
     # Reviews
     path('reviews/create/', views.create_review, name='create_review'),

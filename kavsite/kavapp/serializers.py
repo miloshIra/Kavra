@@ -25,3 +25,9 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
+
+
+class TagPrintSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        exclude = ('recipe', 'created',)

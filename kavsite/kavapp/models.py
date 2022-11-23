@@ -112,7 +112,7 @@ class Tag(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     name = models.CharField(max_length=16)
     created = models.DateTimeField(auto_now_add=True)
-
+    recipe = models.ManyToManyField(Recipe, blank=True)
 
     def __str__(self):
         return str(self.name)

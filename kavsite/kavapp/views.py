@@ -4,7 +4,8 @@ from django.contrib import messages
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from .serializers import RecipeSerializer, OrderSerializer, ReviewSerializer, TagSerializer
+from .serializers import RecipeSerializer, OrderSerializer, \
+    ReviewSerializer, TagSerializer, TagPrintSerializer
 from .models import Recipe, Order, Review, Tag
 from users.models import Profile
 from django.core.exceptions import ValidationError
@@ -50,14 +51,24 @@ def update_recipe(request, pk):
 
 @api_view(['GET'])
 def get_recipe_by_id(request, pk):
-    recipes = Recipe.objects.get(id=pk)
-    serialized_recipe = RecipeSerializer(recipes, many=False).data
-    context = {'recipes': serialized_recipe}
+    recipe = Recipe.objects.get(id=pk)
+    tags = recipe.tag_set.all()
+    serialized_recipe = RecipeSerializer(recipe, many=False).data
+    serialized_tags = TagPrintSerializer(tags, many=True).data
+    context = {'recipe': serialized_recipe, 'tags': serialized_tags}
     return Response(context, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
-def get_all_recipes(request):
+def get_recipe_by_user(request, pk):
+    recipes = Recipe.objects.all().filter(user=pk)
+    ser_recipes = RecipeSerializer(recipes, many=True).data
+    context = {'recipes': ser_recipes}
+    return Response(context, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_all_recipes(request):  # add tags from above if needed.
     recipes = Recipe.objects.all()
     serialized_data = RecipeSerializer(recipes, many=True).data
     context = {'recipes': serialized_data}
@@ -149,6 +160,14 @@ def get_all_tags(request):
     serialized_data = TagSerializer(tags, many=True).data
     context = {'tags': serialized_data}
     return Response(context, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def add_tag_to_recipe(request):
+    recipe = Recipe.objects.get(id=request.data['recipe_id'])
+    tag = Tag.objects.get(id=request.data['tag_id'])
+    tag.recipe.add(recipe)
+    return Response("Tag {} was added to recipe {}".format(tag, recipe), status=status.HTTP_201_CREATED)
 
 
 # .......................... Review apis.........................
