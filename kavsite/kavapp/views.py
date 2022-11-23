@@ -19,8 +19,8 @@ def create_recipe(request):
     """ Creates a new recipe ... at least it should .. if it works it's django magic."""
 
     profile = Profile.objects.get(user=request.user.id)
-    new_recipe = RecipeSerializer(data=request.data)
-    new_recipe.user = profile
+    new_recipe = RecipeSerializer(data={**request.data, 'user': profile.user.id})
+    print(new_recipe)
     new_recipe.is_valid()
     print(new_recipe.errors)  # THIS LINE IS GOLD!!
     if new_recipe.is_valid():
@@ -29,8 +29,7 @@ def create_recipe(request):
         except Exception as e:
             raise e
 
-    serialized_data = RecipeSerializer(new_recipe_saved, many=False).data
-    return Response(serialized_data, status=status.HTTP_200_OK)
+    return Response("Recipe Saved", status=status.HTTP_201_CREATED)
 
 
 @api_view(['PUT'])
